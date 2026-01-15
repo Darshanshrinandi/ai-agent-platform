@@ -24,6 +24,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private CustomUserDetailsService customUserDetailsService;
 
 
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
@@ -31,6 +33,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = null;
         String email = null;
+
+        String path = request.getServletPath();
+        if (path.startsWith("/api/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
