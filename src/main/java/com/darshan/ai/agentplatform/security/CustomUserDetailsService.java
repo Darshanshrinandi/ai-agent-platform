@@ -1,4 +1,4 @@
-package com.darshan.ai.agentplatform.Security;
+package com.darshan.ai.agentplatform.security;
 
 import com.darshan.ai.agentplatform.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

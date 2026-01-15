@@ -1,4 +1,4 @@
-package com.darshan.ai.agentplatform.Security;
+package com.darshan.ai.agentplatform.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

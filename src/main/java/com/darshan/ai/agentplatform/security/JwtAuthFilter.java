@@ -1,4 +1,4 @@
-package com.darshan.ai.agentplatform.Security;
+package com.darshan.ai.agentplatform.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
