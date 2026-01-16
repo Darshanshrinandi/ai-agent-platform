@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Service
@@ -32,14 +31,14 @@ public class ChatService {
     @Autowired
     private PromptRepository promptRepository;
 
-    public String chatWithProjects(Long projectId, String userMessage) throws AccessDeniedException {
+    public String chatWithProjects(Long projectId, String userMessage)  {
 
         String email = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
 
         Project project = projectRepository.findByIdAndUserEmail(projectId, email)
-                .orElseThrow(() -> new AccessDeniedException("You are not allowed to access this project"));
+                .orElseThrow(() -> new RuntimeException("You are not allowed to access this project"));
 
         List<Prompt> prompts = promptService.getPromptsByProject(projectId);
 
