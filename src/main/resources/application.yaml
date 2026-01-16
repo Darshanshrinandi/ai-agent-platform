@@ -20,4 +20,11 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION:86400000}
 
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: always
+
+
 # JWT config fixed for Railway
