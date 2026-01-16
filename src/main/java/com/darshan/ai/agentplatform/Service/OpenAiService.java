@@ -15,8 +15,9 @@ import java.util.Map;
 @Service
 public class OpenAiService {
 
-    @Value("${openai.api.key}")
+    @Value("${openrouter.api.key}")
     private String apiKey;
+
 
     private final String OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
