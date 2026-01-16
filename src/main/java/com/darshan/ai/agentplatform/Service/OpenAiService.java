@@ -11,20 +11,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @Service
 public class OpenAiService {
 
     @Value("${openrouter.api.key}")
     private String apiKey;
 
-
-    private final String OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+    private static final String OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
     private final RestTemplate restTemplate = new RestTemplate();
 
     public String getChatResponse(String prompt) {
 
+        System.out.println("🔥 OPENROUTER_API_KEY = [" + apiKey + "]");
 
         Map<String, String> message = new HashMap<>();
         message.put("role", "user");
@@ -33,28 +32,23 @@ public class OpenAiService {
         List<Map<String, String>> messages = new ArrayList<>();
         messages.add(message);
 
-
         Map<String, Object> requestBody = new HashMap<>();
-
         requestBody.put("model", "meta-llama/llama-3-8b-instruct");
         requestBody.put("messages", messages);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + apiKey);
-        headers.set("HTTP-Referer", "http://localhost");
+        headers.setBearerAuth(apiKey);
+        headers.set("HTTP-Referer", "https://ai-agent-platform-production-8f25.up.railway.app");
         headers.set("X-Title", "AI-Agent-Platform");
 
-        HttpEntity<Map<String, Object>> entity =
-                new HttpEntity<>(requestBody, headers);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
-        // Call OpenRouter
         ResponseEntity<Map> response = restTemplate.postForEntity(
                 OPENROUTER_URL,
                 entity,
                 Map.class
         );
-
 
         Map body = response.getBody();
         if (body == null) return "No response from OpenRouter";
