@@ -35,25 +35,45 @@ public class ChatService {
 
 
 
+//    public String chatWithProjects(Long projectId, String userMessage) {
+//
+//        String email = SecurityContextHolder.getContext()
+//                .getAuthentication()
+//                .getName();
+//
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        Project project = projectRepository.findById(projectId)
+//                .orElseThrow(() -> new RuntimeException("Project not found"));
+//
+//        if (project.getUser() == null) {
+//            throw new AccessDeniedException("Project has no owner assigned");
+//        }
+//
+//        if (!project.getUser().getId().equals(user.getId())) {
+//            throw new AccessDeniedException("You are not allowed to access this project");
+//        }
+//
+//        List<Prompt> prompts = promptService.getPromptsByProject(projectId);
+//
+//        StringBuilder context = new StringBuilder();
+//        for (Prompt prompt : prompts) {
+//            context.append(prompt.getContent()).append("\n");
+//        }
+//
+//        String finalPrompt = context + "\nUser: " + userMessage;
+//
+//        String aiResponse = openAiService.getChatResponse(finalPrompt);
+//
+//        chatHistoryService.saveChat(userMessage, aiResponse, project);
+//        return aiResponse;
+//    }
+
     public String chatWithProjects(Long projectId, String userMessage) {
-
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
-
-        if (project.getUser() == null) {
-            throw new AccessDeniedException("Project has no owner assigned");
-        }
-
-        if (!project.getUser().getId().equals(user.getId())) {
-            throw new AccessDeniedException("You are not allowed to access this project");
-        }
 
         List<Prompt> prompts = promptService.getPromptsByProject(projectId);
 
@@ -69,6 +89,7 @@ public class ChatService {
         chatHistoryService.saveChat(userMessage, aiResponse, project);
         return aiResponse;
     }
+
 
 
 
