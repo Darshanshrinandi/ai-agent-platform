@@ -11,10 +11,14 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  config:
+    import: optional:env
+
 
 openrouter:
   api:
     key: ${OPENROUTER_API_KEY}
+
 
 
 jwt:
