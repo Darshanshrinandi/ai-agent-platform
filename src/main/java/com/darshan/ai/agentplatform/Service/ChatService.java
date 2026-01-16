@@ -22,8 +22,7 @@ public class ChatService {
     @Autowired
     private OpenAiService openAiService;
 
-    @Autowired
-    private ProjectService projectService;
+
 
     @Autowired
     private ProjectRepository projectRepository;
@@ -34,8 +33,7 @@ public class ChatService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private PromptRepository promptRepository;
+
 
     public String chatWithProjects(Long projectId, String userMessage) {
 
@@ -43,14 +41,23 @@ public class ChatService {
                 .getAuthentication()
                 .getName();
 
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Project project = projectRepository.findByIdAndUserId(projectId, user.getId()).orElseThrow(() -> new RuntimeException("Project not found"));
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+
+        if (project.getUser() == null) {
+            throw new AccessDeniedException("Project has no owner assigned");
+        }
+
+        if (!project.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("You are not allowed to access this project");
+        }
 
         List<Prompt> prompts = promptService.getPromptsByProject(projectId);
 
         StringBuilder context = new StringBuilder();
-
         for (Prompt prompt : prompts) {
             context.append(prompt.getContent()).append("\n");
         }
@@ -62,6 +69,7 @@ public class ChatService {
         chatHistoryService.saveChat(userMessage, aiResponse, project);
         return aiResponse;
     }
+
 
 
 
