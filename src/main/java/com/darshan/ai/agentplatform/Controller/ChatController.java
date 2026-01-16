@@ -17,4 +17,10 @@ public class ChatController {
 
         return chatService.chatWithProjects(projectId, userMessage);
     }
+
+    @GetMapping("/api/chat/test")
+    public String testChat() {
+        return "Chat access working";
+    }
+
 }
