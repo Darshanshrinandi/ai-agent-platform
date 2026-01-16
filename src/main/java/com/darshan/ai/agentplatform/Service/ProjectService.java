@@ -29,13 +29,18 @@ public class ProjectService {
         return projectRepository.findByUserId(userId);
     }
 
-    public Project getProjectById(Long id) {
+//    public Project getProjectById(Long id) {
+//
+//         String email = SecurityContextHolder.getContext()
+//                 .getAuthentication()
+//                 .getName();
+//
+//         return projectRepository.findByIdAndUserEmail(id,email).orElseThrow(() -> new RuntimeException("User not allowed to access this project"));
+//    }
 
-         String email = SecurityContextHolder.getContext()
-                 .getAuthentication()
-                 .getName();
+    public Project getProjectById(Long projectId){
 
-         return projectRepository.findByIdAndUserEmail(id,email).orElseThrow(() -> new RuntimeException("User not allowed to access this project"));
+        return projectRepository.findById(projectId).orElseThrow(() -> new RuntimeException("project not found"));
     }
 
 }
