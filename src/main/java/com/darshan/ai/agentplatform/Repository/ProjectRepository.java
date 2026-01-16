@@ -14,5 +14,8 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
 
     Optional<Project> findByIdAndUserEmail(Long id, String email);
 
+    Optional<Project> findByIdAndUserId(Long id, Long userId);
+
+
 
 }

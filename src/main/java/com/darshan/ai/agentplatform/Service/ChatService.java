@@ -2,8 +2,10 @@ package com.darshan.ai.agentplatform.Service;
 
 import com.darshan.ai.agentplatform.Entity.Project;
 import com.darshan.ai.agentplatform.Entity.Prompt;
+import com.darshan.ai.agentplatform.Entity.User;
 import com.darshan.ai.agentplatform.Repository.ProjectRepository;
 import com.darshan.ai.agentplatform.Repository.PromptRepository;
+import com.darshan.ai.agentplatform.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +32,9 @@ public class ChatService {
     private ChatHistoryService chatHistoryService;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private PromptRepository promptRepository;
 
     public String chatWithProjects(Long projectId, String userMessage) {
@@ -38,8 +43,9 @@ public class ChatService {
                 .getAuthentication()
                 .getName();
 
-        Project project = projectRepository.findByIdAndUserEmail(projectId, email)
-                .orElseThrow(() -> new AccessDeniedException("You are not allowed to access this project"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+        Project project = projectRepository.findByIdAndUserId(projectId, user.getId()).orElseThrow(() -> new RuntimeException("Project not found"));
 
         List<Prompt> prompts = promptService.getPromptsByProject(projectId);
 
