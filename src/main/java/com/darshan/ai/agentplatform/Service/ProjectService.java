@@ -4,6 +4,7 @@ import com.darshan.ai.agentplatform.Entity.Project;
 import com.darshan.ai.agentplatform.Entity.User;
 import com.darshan.ai.agentplatform.Repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +31,11 @@ public class ProjectService {
 
     public Project getProjectById(Long id) {
 
-        return projectRepository.findById(id).orElseThrow(() -> new RuntimeException("Project not found"));
+         String email = SecurityContextHolder.getContext()
+                 .getAuthentication()
+                 .getName();
+
+         return projectRepository.findByIdAndUserEmail(id,email).orElseThrow(() -> new RuntimeException("User not allowed to access this project"));
     }
 
 }
