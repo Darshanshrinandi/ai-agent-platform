@@ -21,14 +21,13 @@ public class UserService {
     public User registerUser(User user) {
 
         if (userRepository.existsByEmail(user.getEmail())) {
-
-            log.error("User already exists");
+            throw new RuntimeException("User already exists");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         return userRepository.save(user);
     }
+
 
     public User login(String email, String password) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Invalid email or password"));
