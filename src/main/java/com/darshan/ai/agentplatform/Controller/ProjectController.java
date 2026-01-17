@@ -21,15 +21,18 @@ public class ProjectController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/createProject/{userId}")
-    public ResponseEntity<Project> createProject(@PathVariable("userId") Long userId, @Valid @RequestBody CreateProjectRequest request) {
+    @PostMapping("/createProject")
+    public ResponseEntity<Project> createProject(
+            @Valid @RequestBody CreateProjectRequest request) {
 
-        User user = userService.getById(userId);
-
-        Project project = projectService.createProject(request.getName(), request.getDescription(), user);
+        Project project = projectService.createProject(
+                request.getName(),
+                request.getDescription()
+        );
 
         return new ResponseEntity<>(project, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/getProject/{userId}")
     public ResponseEntity<Project> getProject(@PathVariable("userId") Long userId) {
