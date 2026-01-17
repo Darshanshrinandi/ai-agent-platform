@@ -20,15 +20,23 @@ public class ProjectService {
     private UserRepository userRepository;
 
 
-    public Project createProject(String name, String description, User user) {
+    public Project createProject(String name, String description) {
+
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Project project = new Project();
         project.setName(name);
         project.setDescription(description);
-        project.setUser(user); // already verified
+        project.setUser(user);
 
         return projectRepository.save(project);
     }
+
 
 
     public List<Project> getProjectByUser(Long userId) {
