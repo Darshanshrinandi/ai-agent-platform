@@ -1,154 +1,208 @@
-AI Agent Platform 🚀
+🤖 AI Agent Platform (Backend)
 
-A minimal Chatbot Platform built using Spring Boot, JWT Authentication, PostgreSQL, and OpenRouter (LLM).
-This project allows users to create AI-powered projects (agents), attach prompts, and chat with them securely.
+A backend-driven AI Chatbot Platform that allows users to create AI agents (projects), attach prompts, and interact with them securely using JWT authentication and OpenRouter LLM integration.
 
-✨ Features
+This project was built as part of a Software Engineer Intern assignment, focusing on security, scalability, and clean backend architecture.
 
-✅ User Registration & Login (JWT-based authentication)
+🚀 Live Demo (Backend)
 
-✅ Secure APIs using Spring Security
+Base URL:
 
-✅ Create Projects (AI Agents) per user
+https://ai-agent-platform-production-8f25.up.railway.app
 
-✅ Add and manage prompts per project
 
-✅ Chat with AI using OpenRouter Completion API
-
-✅ Store chat history in database
-
-✅ Production-ready deployment on Railway
-
-✅ Scalable & extensible backend architecture
+⚠️ This is an API-first backend. Frontend is optional and can be integrated later.
 
 🛠️ Tech Stack
 
-Backend: Java 21, Spring Boot 3
+Java 21
 
-Security: Spring Security + JWT
+Spring Boot
 
-Database: PostgreSQL (Railway)
+Spring Security + JWT
 
-ORM: Spring Data JPA + Hibernate
+Hibernate / JPA
 
-AI Integration: OpenRouter API
+PostgreSQL (Railway)
 
-Build Tool: Maven
+OpenRouter API (LLM Integration)
 
-Deployment: Railway
+Maven
 
-📐 Architecture Overview
+Railway (Deployment)
+
+✨ Features
+🔐 Authentication & Security
+
+User registration & login
+
+JWT-based stateless authentication
+
+Password encryption using BCrypt
+
+Secure authorization using SecurityContext
+
+📁 Project / Agent Management
+
+Create AI projects (agents)
+
+Each project is strictly owned by the logged-in user
+
+Prevents cross-user access (no privilege escalation)
+
+🧠 Prompt Management
+
+Attach prompts to projects
+
+Prompts are used as context during AI conversations
+
+💬 AI Chat
+
+Chat with AI agents using OpenRouter Completion API
+
+Context-aware conversations using stored prompts
+
+AI responses fetched securely via API key
+
+🗃️ Chat History
+
+Stores user messages and AI responses
+
+Maintains conversation history per project
+
+🧱 Architecture Overview
+Client
+|
+|  JWT Token
+v
+Spring Security Filter (JWT)
+|
 Controller Layer
-↓
-Service Layer (Business Logic)
-↓
+|
+Service Layer (Business Logic + Ownership Validation)
+|
 Repository Layer (JPA)
-↓
+|
 PostgreSQL Database
+|
+OpenRouter API (LLM)
 
+🔑 Key Design Decisions
 
-Controllers handle HTTP & DTO validation
+User identity is derived only from JWT, never from request parameters
 
-Services contain core business logic
+Ownership checks enforced at service layer
 
-JWT filter secures protected routes
+DTO-based request handling for stability and validation
 
-AI service communicates with OpenRouter
+Stateless authentication for scalability
 
-Chat history stored for future retrieval
+📌 API Endpoints
+🔑 Auth APIs
+Method	Endpoint	Description
+POST	/api/auth/register	Register a new user
+POST	/api/auth/login	Login and receive JWT
+
+📁 Project APIs (JWT Required)
+Method	Endpoint	Description
+POST	/api/projects	Create a project
+GET	/api/projects	Get user projects
+
+📝 Prompt APIs (JWT Required)
+Method	Endpoint	Description
+POST	/api/projects/{projectId}/prompts	Add prompt to project
+GET	/api/projects/{projectId}/prompts	List prompts
+
+💬 Chat API (JWT Required)
+Method	Endpoint	Description
+POST	/api/chat/{projectId}	Chat with AI agent
+
+Chat Request Body
+
+{
+"message": "Explain this project"
+}
 
 🔐 Authentication Flow
 
-User registers with email & password
+User logs in with email & password
 
-Password stored using BCrypt hashing
+Credentials validated via AuthenticationManager
 
-User logs in → JWT token generated
+JWT token generated only after successful authentication
 
-JWT token required for all protected APIs
+Token sent in request header:
 
-Spring Security validates token on every request
-
-📡 API Endpoints (Sample)
-Auth
-POST /api/auth/register
-POST /api/auth/login
-
-Projects
-POST /api/projects
-GET  /api/projects
-
-Prompts
-POST /api/projects/{projectId}/prompts
-GET  /api/projects/{projectId}/prompts
-
-Chat with AI
-POST /api/chat/{projectId}
+Authorization: Bearer <JWT_TOKEN>
 
 
-Request Body
-
-{
-"message": "Explain JWT in simple terms"
-}
-
-🤖 AI Integration
-
-Uses OpenRouter Completion API
-
-Model example: mistralai/mistral-7b-instruct
-
-Prompts attached to project are used as context
-
-Responses are stored along with user queries
+User identity resolved from JWT for all protected operations
 
 ⚙️ Environment Variables
 
-Set the following variables (Railway / local):
+Create the following variables in Railway or .env:
 
-DATABASE_URL
-DATABASE_USERNAME
-DATABASE_PASSWORD
-OPENROUTER_API_KEY
-JWT_SECRET
-JWT_EXPIRATION
+DB_URL=jdbc:postgresql://<host>:5432/<db>
+DB_USERNAME=<username>
+DB_PASSWORD=<password>
+
+JWT_SECRET=<secure-256-bit-secret>
+JWT_EXPIRATION=86400000
+
+OPENROUTER_API_KEY=<your_openrouter_api_key>
 
 ▶️ Run Locally
-git clone <repo-url>
+git clone https://github.com/Darshanshrinandi/ai-agent-platform.git
 cd ai-agent-platform
 mvn spring-boot:run
 
 
-App runs on:
+App runs at:
 
 http://localhost:8080
 
-🌍 Live Demo
+🧪 Testing Tips
 
-Backend URL
+Use Postman
 
-https://ai-agent-platform-production-8f25.up.railway.app
+Always send:
 
-🎥 Demo
+Content-Type: application/json
+Authorization: Bearer <JWT>
 
-API demo via Postman
 
-Shows user registration, login, project creation, prompt addition, and AI chat
+Ensure correct request bodies (no text/plain)
 
-🚀 Future Enhancements
+🧠 Key Learnings
+
+Correct JWT authentication using AuthenticationManager
+
+Preventing broken object-level authorization (BOLA)
+
+Importance of ownership validation
+
+Real-world debugging of Spring Security (403/401 issues)
+
+Secure integration with third-party LLM APIs
+
+🔮 Future Enhancements
 
 Frontend UI (React)
 
-File upload support (OpenAI Files API)
+Role-based access (Admin/User)
 
-Chat analytics
+File upload support
 
-Role-based access control
+Conversation analytics
 
-Rate limiting
+Rate limiting & caching
 
-👤 Author
+👨‍💻 Author
 
 Darshan S V
-Software Engineer Intern Applicant
-Backend | Java | Spring Boot
+Backend-focused Java Developer
+Built with ❤️ and persistence
+
+📄 License
+
+This project is for educational and evaluation purposes.
