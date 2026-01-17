@@ -19,19 +19,13 @@ public class ProjectService {
     @Autowired
     private UserRepository userRepository;
 
-    public Project createProject(String name, String description) {
 
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public Project createProject(String name, String description, User user) {
 
         Project project = new Project();
         project.setName(name);
         project.setDescription(description);
-        project.setUser(user);
+        project.setUser(user); // already verified
 
         return projectRepository.save(project);
     }
