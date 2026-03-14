@@ -1,76 +1,80 @@
-🤖 AI Agent Platform (Backend)
+# 🤖 AI Agent Platform (Backend)
 
-A backend-driven AI Chatbot Platform that allows users to create AI agents (projects), attach prompts, and interact with them securely using JWT authentication and OpenRouter LLM integration.
+A backend-driven **AI Chatbot Platform** that allows users to create AI agents (projects), attach prompts, and interact with them securely using **JWT authentication** and **Grok LLM integration**.
 
-This project was built as part of a Software Engineer Intern assignment, focusing on security, scalability, and clean backend architecture.
+This project was built as part of a **Software Engineer Intern assignment**, focusing on **security, scalability, and clean backend architecture**.
 
-🚀 Live Demo (Backend)
+---
+
+# 🚀 Live Demo (Backend)
 
 Base URL:
 
+```
 https://ai-agent-platform-production-8f25.up.railway.app
+```
 
+⚠️ This is an **API-first backend**. A frontend (React, etc.) can be integrated later.
 
-⚠️ This is an API-first backend. Frontend is optional and can be integrated later.
+---
 
-🛠️ Tech Stack
+# 🛠️ Tech Stack
 
-Java 21
+* Java 21
+* Spring Boot
+* Spring Security + JWT
+* Hibernate / JPA
+* PostgreSQL (Railway)
+* Grok API (LLM Integration)
+* Maven
+* Railway (Deployment)
 
-Spring Boot
+---
 
-Spring Security + JWT
+# ✨ Features
 
-Hibernate / JPA
+## 🔐 Authentication & Security
 
-PostgreSQL (Railway)
+* User registration & login
+* JWT-based stateless authentication
+* Password encryption using BCrypt
+* Secure authorization using Spring SecurityContext
 
-OpenRouter API (LLM Integration)
+---
 
-Maven
+## 📁 Project / Agent Management
 
-Railway (Deployment)
+* Create AI projects (agents)
+* Each project is strictly owned by the logged-in user
+* Prevents cross-user access (no privilege escalation)
 
-✨ Features
-🔐 Authentication & Security
+---
 
-User registration & login
+## 🧠 Prompt Management
 
-JWT-based stateless authentication
+* Attach prompts to projects
+* Prompts are used as context during AI conversations
 
-Password encryption using BCrypt
+---
 
-Secure authorization using SecurityContext
+## 💬 AI Chat
 
-📁 Project / Agent Management
+* Chat with AI agents using **Grok API**
+* Context-aware conversations using stored prompts
+* AI responses fetched securely via API key
 
-Create AI projects (agents)
+---
 
-Each project is strictly owned by the logged-in user
+## 🗃️ Chat History
 
-Prevents cross-user access (no privilege escalation)
+* Stores user messages and AI responses
+* Maintains conversation history per project
 
-🧠 Prompt Management
+---
 
-Attach prompts to projects
+# 🧱 Architecture Overview
 
-Prompts are used as context during AI conversations
-
-💬 AI Chat
-
-Chat with AI agents using OpenRouter Completion API
-
-Context-aware conversations using stored prompts
-
-AI responses fetched securely via API key
-
-🗃️ Chat History
-
-Stores user messages and AI responses
-
-Maintains conversation history per project
-
-🧱 Architecture Overview
+```
 Client
 |
 |  JWT Token
@@ -85,63 +89,86 @@ Repository Layer (JPA)
 |
 PostgreSQL Database
 |
-OpenRouter API (LLM)
+Grok API (LLM)
+```
 
-🔑 Key Design Decisions
+---
 
-User identity is derived only from JWT, never from request parameters
+# 🔑 Key Design Decisions
 
-Ownership checks enforced at service layer
+* User identity is derived **only from JWT**, never from request parameters
+* Ownership checks enforced at **service layer**
+* DTO-based request handling for **validation and stability**
+* Stateless authentication for **scalability**
+* Clean layered architecture for maintainability
 
-DTO-based request handling for stability and validation
+---
 
-Stateless authentication for scalability
+# 📌 API Endpoints
 
-📌 API Endpoints
-🔑 Auth APIs
-Method	Endpoint	Description
-POST	/api/auth/register	Register a new user
-POST	/api/auth/login	Login and receive JWT
+## 🔑 Auth APIs
 
-📁 Project APIs (JWT Required)
-Method	Endpoint	Description
-POST	/api/projects	Create a project
-GET	/api/projects	Get user projects
+| Method | Endpoint           | Description           |
+| ------ | ------------------ | --------------------- |
+| POST   | /api/auth/register | Register a new user   |
+| POST   | /api/auth/login    | Login and receive JWT |
 
-📝 Prompt APIs (JWT Required)
-Method	Endpoint	Description
-POST	/api/projects/{projectId}/prompts	Add prompt to project
-GET	/api/projects/{projectId}/prompts	List prompts
+---
 
-💬 Chat API (JWT Required)
-Method	Endpoint	Description
-POST	/api/chat/{projectId}	Chat with AI agent
+## 📁 Project APIs (JWT Required)
 
-Chat Request Body
+| Method | Endpoint      | Description       |
+| ------ | ------------- | ----------------- |
+| POST   | /api/projects | Create a project  |
+| GET    | /api/projects | Get user projects |
 
+---
+
+## 📝 Prompt APIs (JWT Required)
+
+| Method | Endpoint                          | Description           |
+| ------ | --------------------------------- | --------------------- |
+| POST   | /api/projects/{projectId}/prompts | Add prompt to project |
+| GET    | /api/projects/{projectId}/prompts | List prompts          |
+
+---
+
+## 💬 Chat API (JWT Required)
+
+| Method | Endpoint              | Description        |
+| ------ | --------------------- | ------------------ |
+| POST   | /api/chat/{projectId} | Chat with AI agent |
+
+### Chat Request Body
+
+```
 {
-"message": "Explain this project"
+  "message": "Explain this project"
 }
+```
 
-🔐 Authentication Flow
+---
 
-User logs in with email & password
+# 🔐 Authentication Flow
 
-Credentials validated via AuthenticationManager
+1. User logs in with **email & password**
+2. Credentials validated via **AuthenticationManager**
+3. JWT token generated after successful authentication
+4. Token sent in request header:
 
-JWT token generated only after successful authentication
-
-Token sent in request header:
-
+```
 Authorization: Bearer <JWT_TOKEN>
+```
 
+5. User identity resolved from **JWT for all protected operations**
 
-User identity resolved from JWT for all protected operations
+---
 
-⚙️ Environment Variables
+# ⚙️ Environment Variables
 
-Create the following variables in Railway or .env:
+Set these variables in **Railway or `.env`**
 
+```
 DB_URL=jdbc:postgresql://<host>:5432/<db>
 DB_USERNAME=<username>
 DB_PASSWORD=<password>
@@ -149,60 +176,85 @@ DB_PASSWORD=<password>
 JWT_SECRET=<secure-256-bit-secret>
 JWT_EXPIRATION=86400000
 
-OPENROUTER_API_KEY=<your_openrouter_api_key>
+GROK_API_KEY=<your_grok_api_key>
+```
 
-▶️ Run Locally
+---
+
+# ▶️ Run Locally
+
+Clone the repository:
+
+```
 git clone https://github.com/Darshanshrinandi/ai-agent-platform.git
-cd ai-agent-platform
-mvn spring-boot:run
+```
 
+Navigate to the project:
+
+```
+cd ai-agent-platform
+```
+
+Run the application:
+
+```
+mvn spring-boot:run
+```
 
 App runs at:
 
+```
 http://localhost:8080
+```
 
-🧪 Testing Tips
+---
 
-Use Postman
+# 🧪 Testing Tips
 
-Always send:
+Use **Postman** or any API client.
 
+Always send headers:
+
+```
 Content-Type: application/json
-Authorization: Bearer <JWT>
+Authorization: Bearer <JWT_TOKEN>
+```
 
+Ensure request bodies are **JSON**, not `text/plain`.
 
-Ensure correct request bodies (no text/plain)
+---
 
-🧠 Key Learnings
+# 🧠 Key Learnings
 
-Correct JWT authentication using AuthenticationManager
+* Correct JWT authentication using **AuthenticationManager**
+* Preventing **Broken Object Level Authorization (BOLA)**
+* Importance of **ownership validation**
+* Real-world debugging of **Spring Security (401 / 403 issues)**
+* Secure integration with **external LLM APIs**
+* Designing **scalable backend architectures**
 
-Preventing broken object-level authorization (BOLA)
+---
 
-Importance of ownership validation
+# 🔮 Future Enhancements
 
-Real-world debugging of Spring Security (403/401 issues)
+* React Frontend UI
+* Role-based access (Admin/User)
+* File upload support
+* Conversation analytics
+* Rate limiting & caching
+* Multi-model LLM support
 
-Secure integration with third-party LLM APIs
+---
 
-🔮 Future Enhancements
+# 👨‍💻 Author
 
-Frontend UI (React)
+**Darshan S V**
+Backend-focused **Java Developer**
 
-Role-based access (Admin/User)
+Built with ❤️ and persistence.
 
-File upload support
+---
 
-Conversation analytics
+# 📄 License
 
-Rate limiting & caching
-
-👨‍💻 Author
-
-Darshan S V
-Backend-focused Java Developer
-Built with ❤️ and persistence
-
-📄 License
-
-This project is for educational and evaluation purposes.
+This project is for **educational and evaluation purposes**.
