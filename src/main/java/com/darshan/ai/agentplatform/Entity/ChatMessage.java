@@ -8,21 +8,24 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Entity
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class ChatMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 4000)
+    @Lob
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String userMessage;
 
-    @Column(nullable = false, length = 4000)
+    @Lob
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String aiResponse;
 
     private LocalDateTime timestamp;

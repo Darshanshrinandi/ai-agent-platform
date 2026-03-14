@@ -2,20 +2,25 @@ package com.darshan.ai.agentplatform.Service;
 
 import com.darshan.ai.agentplatform.Entity.Project;
 import com.darshan.ai.agentplatform.Entity.Prompt;
+import com.darshan.ai.agentplatform.Repository.ProjectRepository;
 import com.darshan.ai.agentplatform.Repository.PromptRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 @Service
+@RequiredArgsConstructor
 public class PromptService {
 
+    private final PromptRepository promptRepository;
+    private final ProjectRepository projectRepository;
 
-    @Autowired
-    private PromptRepository promptRepository;
+    public Prompt addPrompt(Long projectId, String content, String email) {
 
-    public Prompt addPrompt(String content, Project project) {
+        Project project = projectRepository
+                .findByIdAndUserEmail(projectId, email)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
 
         Prompt prompt = new Prompt();
         prompt.setContent(content);
@@ -24,7 +29,12 @@ public class PromptService {
         return promptRepository.save(prompt);
     }
 
-    public List<Prompt> getPromptsByProject(Long projectId) {
-        return promptRepository.findByProjectId(projectId);
+    public List<Prompt> getPromptsByProject(Long projectId, String email) {
+
+        Project project = projectRepository
+                .findByIdAndUserEmail(projectId, email)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+
+        return promptRepository.findByProject(project);
     }
 }

@@ -6,32 +6,44 @@ import com.darshan.ai.agentplatform.Entity.Prompt;
 import com.darshan.ai.agentplatform.Service.ProjectService;
 import com.darshan.ai.agentplatform.Service.PromptService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/projects/{projectId}/prompts")
+@RequiredArgsConstructor
 public class PromptController {
 
-    @Autowired
-    private ProjectService projectService;
-
-    @Autowired
-    private PromptService promptService;
+    private final PromptService promptService;
+    private final ProjectService projectService;
 
     @PostMapping
-    public Prompt addPrompt(@PathVariable Long projectId, @Valid @RequestBody CreatePromptRequest promptRequest) {
+    public ResponseEntity<Prompt> addPrompt(
+            @PathVariable Long projectId,
+            @Valid @RequestBody CreatePromptRequest request,
+            Authentication authentication) {
 
-        Project project = projectService.getProjectById(projectId);
+        Prompt prompt = promptService.addPrompt(
+                projectId,
+                request.getContent(),
+                authentication.getName()
+        );
 
-        return promptService.addPrompt(promptRequest.getContent(), project);
+        return ResponseEntity.status(HttpStatus.CREATED).body(prompt);
     }
 
-    @GetMapping("/allPrompts")
-    public List<Prompt> getAllPrompts(@PathVariable Long projectId) {
+    @GetMapping
+    public ResponseEntity<List<Prompt>> getAllPrompts(
+            @PathVariable Long projectId,
+            Authentication authentication) {
 
-        return promptService.getPromptsByProject(projectId);
+        List<Prompt> prompts =
+                promptService.getPromptsByProject(projectId, authentication.getName());
+
+        return ResponseEntity.ok(prompts);
     }
 }

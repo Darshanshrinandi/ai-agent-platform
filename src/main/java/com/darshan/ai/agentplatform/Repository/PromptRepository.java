@@ -8,5 +8,8 @@ import java.util.List;
 
 public interface PromptRepository extends JpaRepository<Prompt,Long> {
 
-    List<Prompt> findByProjectId(Long projectId);
+
+
+
+    List<Prompt> findByProject(Project project);
 }

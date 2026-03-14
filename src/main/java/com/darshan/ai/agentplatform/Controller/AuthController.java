@@ -1,10 +1,10 @@
 package com.darshan.ai.agentplatform.Controller;
-
 import com.darshan.ai.agentplatform.DTO.LoginRequest;
 import com.darshan.ai.agentplatform.DTO.RegisterUserRequest;
 import com.darshan.ai.agentplatform.Entity.User;
 import com.darshan.ai.agentplatform.security.JwtUtil;
 import com.darshan.ai.agentplatform.Service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Public APIs",description = "SignUp and Login")
 public class AuthController {
 
 

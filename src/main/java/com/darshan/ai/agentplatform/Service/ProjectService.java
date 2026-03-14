@@ -1,35 +1,31 @@
 package com.darshan.ai.agentplatform.Service;
 
 import com.darshan.ai.agentplatform.Entity.Project;
+
 import com.darshan.ai.agentplatform.Entity.User;
 import com.darshan.ai.agentplatform.Repository.ProjectRepository;
+
 import com.darshan.ai.agentplatform.Repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.access.AccessDeniedException;
+
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProjectService {
 
-    @Autowired
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    public Project createProject(String name, String description, String email) {
 
-
-
-
-    public Project createProject(String name, String description) {
-
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         Project project = new Project();
         project.setName(name);
@@ -39,17 +35,23 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
+    public List<Project> getProjectsByUser(String email) {
 
-
-    public List<Project> getProjectByUser(Long userId) {
-        return projectRepository.findByUserId(userId);
+        return projectRepository.findByUserEmail(email);
     }
 
+    public Project getProject(Long projectId, String email) {
 
-
-    public Project getProjectById(Long projectId){
-
-        return projectRepository.findById(projectId).orElseThrow(() -> new RuntimeException("project not found"));
+        return projectRepository.findByIdAndUserEmail(projectId, email).orElseThrow(() -> new EntityNotFoundException("Project not found"));
     }
 
+    public void deleteProject(Long projectId, String email) {
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Project project = projectRepository.findByIdAndUserId(projectId, user.getId()).orElseThrow(() -> new AccessDeniedException("Project not found by this user"));
+
+        projectRepository.delete(project);
+
+    }
 }

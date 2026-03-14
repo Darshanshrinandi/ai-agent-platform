@@ -2,7 +2,7 @@ package com.darshan.ai.agentplatform.security;
 
 import com.darshan.ai.agentplatform.Entity.User;
 import com.darshan.ai.agentplatform.Repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

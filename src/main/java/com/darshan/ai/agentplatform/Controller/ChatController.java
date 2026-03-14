@@ -1,34 +1,36 @@
 package com.darshan.ai.agentplatform.Controller;
-
 import com.darshan.ai.agentplatform.DTO.ChatRequest;
-import com.darshan.ai.agentplatform.Entity.ChatMessage;
 import com.darshan.ai.agentplatform.Service.ChatService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/chat")
+@RequiredArgsConstructor
 public class ChatController {
 
-    @Autowired
-    private ChatService chatService;
+    private final ChatService chatService;
 
     @PostMapping("/{projectId}")
     public ResponseEntity<String> chat(
             @PathVariable Long projectId,
-            @RequestBody ChatRequest request
+            @RequestBody ChatRequest request,
+            Authentication authentication
     ) {
-        String response = chatService.chatWithProjects(
+
+        String response = chatService.chatWithProject(
                 projectId,
-                request.getMessage()
+                request.getMessage(),
+                authentication.getName()
         );
+
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/test")
-    public String testChat() {
-        return "Chat access working";
+    public ResponseEntity<String> testChat() {
+        return ResponseEntity.ok("Chat access working");
     }
-
 }

@@ -2,46 +2,62 @@ package com.darshan.ai.agentplatform.Controller;
 
 import com.darshan.ai.agentplatform.DTO.CreateProjectRequest;
 import com.darshan.ai.agentplatform.Entity.Project;
-import com.darshan.ai.agentplatform.Entity.User;
 import com.darshan.ai.agentplatform.Service.ProjectService;
-import com.darshan.ai.agentplatform.Service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/projects")
+@RequiredArgsConstructor
 public class ProjectController {
 
-    @Autowired
-    private ProjectService projectService;
+    private final ProjectService projectService;
 
-    @Autowired
-    private UserService userService;
-
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseEntity<Project> createProject(
-            @Valid @RequestBody CreateProjectRequest request) {
+            @Valid @RequestBody CreateProjectRequest request,
+            Authentication authentication) {
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(projectService.createProject(
-                        request.getName(),
-                        request.getDescription()
-                ));
+        Project project = projectService.createProject(
+                request.getName(),
+                request.getDescription(),
+                authentication.getName()
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(project);
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<List<Project>> getMyProjects(Authentication authentication) {
 
+        List<Project> projects =
+                projectService.getProjectsByUser(authentication.getName());
 
-    @GetMapping("/getProject/{userId}")
-    public ResponseEntity<Project> getProject(@PathVariable("userId") Long userId) {
+        return ResponseEntity.ok(projects);
+    }
 
-        Project project = projectService.getProjectById(userId);
+    @GetMapping("/{projectId}")
+    public ResponseEntity<Project> getProject(
+            @PathVariable Long projectId,
+            Authentication authentication) {
 
-        return new ResponseEntity<>(project, HttpStatus.OK);
+        Project project =
+                projectService.getProject(projectId, authentication.getName());
+
+        return ResponseEntity.ok(project);
+
+    }
+
+    @DeleteMapping("/projectId")
+    public ResponseEntity<Void> deleteProject(@PathVariable Long projectId,Authentication authentication) {
+
+         projectService.deleteProject(projectId, authentication.getName());
+         return ResponseEntity.noContent().build();
     }
 }
